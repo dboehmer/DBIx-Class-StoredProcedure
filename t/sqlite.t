@@ -6,7 +6,7 @@ use Test::More;
 eval "use DBD::SQLite; 1"
   or plan skip_all => "DBD::SQLite needed for this test";
 
-plan tests => 3;
+plan tests => 4;
 
 my $schema = MySchema->connect(
     "DBI:SQLite::memory:",
@@ -32,10 +32,13 @@ my $schema = MySchema->connect(
 
 ok $schema, "MySchema->connect";
 
-is_deeply $schema->storage->dbh->selectall_arrayref("SELECT TIME()") =>
-  [ [time] ],
+is $schema->storage->dbh->selectall_arrayref("SELECT TIME()")->[0][0] => time,
   "SQL function TIME() returns time";
 
-is_deeply $schema->storage->dbh->selectall_arrayref("SELECT TIME(42)") =>
-  [ [ time + 42 ] ],
+is $schema->storage->dbh->selectall_arrayref("SELECT TIME(42)")->[0][0] =>
+  ( time + 42 ),
   "SQL function TIME() accepts offset";
+
+is $schema->storage->dbh->selectall_arrayref("SELECT TIME('foo')")->[0][0] =>
+  time,
+  "SQL function TIME() treats strings as 0";
