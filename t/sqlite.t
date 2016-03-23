@@ -1,7 +1,12 @@
 #!/usr/bin/env perl
 
 use MySchema;
-use Test::More tests => 2;
+use Test::More;
+
+eval "use DBD::SQLite; 1"
+  or plan skip_all => "DBD::SQLite needed for this test";
+
+plan tests => 2;
 
 my $schema = MySchema->connect(
     "DBI:SQLite::memory:",
