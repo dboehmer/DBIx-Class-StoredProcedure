@@ -3,7 +3,7 @@ package MySchema::StoredProcedure::Time;
 use strict;
 use warnings;
 
-use base 'DBIx::Class::StoredProcedure';
+use base 'MySchema::StoredProcedure';
 
 __PACKAGE__->procedure("time");
 

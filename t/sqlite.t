@@ -6,7 +6,7 @@ use Test::More;
 eval "use DBD::SQLite; 1"
   or plan skip_all => "DBD::SQLite needed for this test";
 
-plan tests => 4;
+plan tests => 13;
 
 my $schema = MySchema->connect(
     "DBI:SQLite::memory:",
@@ -42,3 +42,28 @@ is $schema->storage->dbh->selectall_arrayref("SELECT TIME(42)")->[0][0] =>
 is $schema->storage->dbh->selectall_arrayref("SELECT TIME('foo')")->[0][0] =>
   time,
   "SQL function TIME() treats strings as 0";
+
+subtest load_namespaces => sub {
+    ok my $rs = $schema->resultset('MyTable');
+    isa_ok $rs => 'DBIx::Class::ResultSet';
+    isa_ok $rs => 'MySchema::ResultSet';
+};
+
+ok my $rs = $schema->stored_procedure('Time'), '$schema->stored_procedure';
+isa_ok $rs => 'DBIx::Class::StoredProcedure::ResultSet';
+ok $rs = $rs->search( { offset => 42 } ), '$resultset->search';
+ok my $row = $rs->next, '$resultset->single';
+can_ok $row => 'time';
+is $row->time => ( time + 42 ), '$row->time';
+
+is $schema->execute_stored_procedure( Time => { offset => 42 } )->next->time =>
+  ( time + 42 ),
+  '$schema->execute_stored_procedure';
+
+subtest relationships => sub {
+    ok my $table = $schema->resultset('MyTable')->new( { offset => 42 } );
+
+    ok my $rel_rs = $table->times;
+
+    is $rel_rs->next->time => time + 42;
+};
