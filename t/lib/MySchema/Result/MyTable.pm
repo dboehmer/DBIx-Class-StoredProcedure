@@ -15,7 +15,7 @@ __PACKAGE__->add_columns(
 );
 
 __PACKAGE__->has_many(
-    times => 'MySchema::StoredProcedure::Time',
+    times => 'MySchema::Result::Time',
     { 'foreign.offset' => 'self.offset' },
 );
 

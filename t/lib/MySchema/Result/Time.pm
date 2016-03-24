@@ -1,4 +1,4 @@
-package MySchema::StoredProcedure::Time;
+package MySchema::Result::Time;
 
 use strict;
 use warnings;
