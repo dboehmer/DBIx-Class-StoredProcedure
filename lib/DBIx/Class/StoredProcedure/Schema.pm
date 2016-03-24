@@ -18,7 +18,7 @@ sub load_namespaces {
     else {    # make result_namespace an array
         my $scalar = delete $args{result_namespace};
         $result_namespace = $args{result_namespace} = [];
-        $scalar and push @$result_namespace, $scalar;
+        push @$result_namespace, $scalar || 'Result';
     }
 
     my $sp_namespace =
