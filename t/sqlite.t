@@ -32,15 +32,14 @@ my $schema = MySchema->connect(
 
 ok $schema, "MySchema->connect";
 
-is $schema->storage->dbh->selectall_arrayref("SELECT TIME()")->[0][0] => time,
+is $schema->storage->dbh->selectrow_arrayref("SELECT TIME()")->[0] => time,
   "SQL function TIME() returns time";
 
-is $schema->storage->dbh->selectall_arrayref("SELECT TIME(42)")->[0][0] =>
+is $schema->storage->dbh->selectrow_arrayref("SELECT TIME(42)")->[0] =>
   ( time + 42 ),
   "SQL function TIME() accepts offset";
 
-is $schema->storage->dbh->selectall_arrayref("SELECT TIME('foo')")->[0][0] =>
-  time,
+is $schema->storage->dbh->selectrow_arrayref("SELECT TIME('foo')")->[0] => time,
   "SQL function TIME() treats strings as 0";
 
 ok my $rs = $schema->stored_procedure('Time'), '$schema->stored_procedure';
