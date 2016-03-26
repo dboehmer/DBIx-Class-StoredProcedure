@@ -6,15 +6,17 @@ use warnings;
 use base 'DBIx::Class::ResultSet';
 
 use DBIx::Class::Storage::DBI::Cursor;
+use Moo::Role;
 
 sub new {
     my $class = shift;
     my ($result_source) = @_;
 
     my $sqlt_type = $result_source->storage->sqlt_type;
-    $class->load_components("StoredProcedure::ResultSet::$sqlt_type");
-
-    return $class->SUPER::new(@_);
+    my $role      = __PACKAGE__ . "::" . $sqlt_type;
+    my $self      = $class->SUPER::new(@_);
+    Moo::Role->apply_roles_to_object( $self, $role );
+    return $self;
 }
 
 sub stored_procedure { shift->result_source->name }
@@ -40,7 +42,7 @@ sub cursor {
             }
         }
 
-        my $storage = $self->storage(\%params);
+        my $storage = $self->storage( \%params );
         $self->{cursor} = DBIx::Class::Storage::DBI::Cursor->new($storage);
     }
 

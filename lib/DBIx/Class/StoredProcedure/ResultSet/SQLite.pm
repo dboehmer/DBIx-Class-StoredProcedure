@@ -4,8 +4,7 @@ use strict;
 use warnings;
 
 use DBIx::Class::StoredProcedure::Storage;
-
-use base 'DBIx::Class';
+use Moo::Role;
 
 sub storage {
     my ( $self, $params ) = @_;
