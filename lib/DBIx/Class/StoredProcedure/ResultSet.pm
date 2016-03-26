@@ -6,15 +6,24 @@ use warnings;
 use base 'DBIx::Class::ResultSet';
 
 use DBIx::Class::Storage::DBI::Cursor;
-use DBIx::Class::StoredProcedure::Storage;
-use Module::Load;
+
+sub new {
+    my $class = shift;
+    my ($result_source) = @_;
+
+    my $sqlt_type = $result_source->storage->sqlt_type;
+    $class->load_components("StoredProcedure::ResultSet::$sqlt_type");
+
+    return $class->SUPER::new(@_);
+}
+
+sub stored_procedure { shift->result_source->name }
 
 sub cursor {
     my $self = shift;
 
     if ( not $self->{cursor} ) {
-        my $stored_procedure = $self->result_source->name;
-        my $cols             = $self->result_source->arguments;
+        my $cols = $self->result_source->arguments;
 
         my %params;
 
@@ -31,24 +40,8 @@ sub cursor {
             }
         }
 
-        my $sql = "SELECT $stored_procedure("
-          . join( ", ", map { "?" } keys %params ) . ")";
-
-        my $storage = DBIx::Class::StoredProcedure::Storage->new(
-            storage => $self->result_source->storage,
-            sql     => $sql,
-            params  => [ values %params ],
-        );
-
+        my $storage = $self->storage(\%params);
         $self->{cursor} = DBIx::Class::Storage::DBI::Cursor->new($storage);
-    }
-
-    if ( not $self->{cursor} ) {
-        my $sqlt_type = $self->result_source->storage->sqlt_type;
-        my $cursor_class =
-          'DBIx::Class::StoredProcedure::Cursor::' . $sqlt_type;
-        load $cursor_class;    # TODO do beforehand?
-        $self->{cursor} = $cursor_class->new($self);
     }
 
     return $self->{cursor};
