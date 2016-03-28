@@ -8,13 +8,15 @@ use base 'DBIx::Class::ResultSet';
 use DBIx::Class::Storage::DBI::Cursor;
 use Moo::Role;
 
+__PACKAGE__->mk_group_ro_accessors( simple => qw<sqlt_type> );
+
 sub new {
     my $class = shift;
     my ($result_source) = @_;
 
-    my $sqlt_type = $result_source->storage->sqlt_type;
-    my $role      = __PACKAGE__ . "::" . $sqlt_type;
-    my $self      = $class->SUPER::new(@_);
+    my $self = $class->SUPER::new(@_);
+    $self->{sqlt_type} = $result_source->storage->sqlt_type;
+    my $role = __PACKAGE__ . "::" . $self->sqlt_type;
     Moo::Role->apply_roles_to_object( $self, $role );
     return $self;
 }
