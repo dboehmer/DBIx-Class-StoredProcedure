@@ -31,24 +31,24 @@ sub cursor {
     my $self = shift;
 
     if ( not $self->{cursor} ) {
-        my $cols = $self->result_source->parameters;
+        my $params = $self->result_source->parameters;
 
-        my %params;
+        my %values;
 
         my $me    = $self->current_source_alias;
         my $where = $self->{_attrs}{where};
-        for my $col ( keys %$cols ) {
+        for my $param ( keys %$params ) {
 
-            # TODO find solution to distinguish me.$col and $col
-            if ( exists $where->{"$me.$col"} ) {
-                $params{$col} = $where->{"$me.$col"};
+            # TODO find solution to distinguish me.$param and $param
+            if ( exists $where->{"$me.$param"} ) {
+                $values{$param} = $where->{"$me.$param"};
             }
-            elsif ( exists $where->{$col} ) {
-                $params{$col} = $where->{$col};
+            elsif ( exists $where->{$param} ) {
+                $values{$param} = $where->{$param};
             }
         }
 
-        my $storage = $self->storage( \%params );
+        my $storage = $self->storage( \%values );
         $self->{cursor} = DBIx::Class::Storage::DBI::Cursor->new($storage);
     }
 
