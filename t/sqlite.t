@@ -25,6 +25,7 @@ my $schema = MySchema->connect(
                 sub {
                     my ($offset) = @_;
 
+                    no warnings 'numeric';
                     $offset //= 0;    # default
                     $offset += 0;     # numify
 
