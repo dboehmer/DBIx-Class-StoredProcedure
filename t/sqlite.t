@@ -6,12 +6,12 @@ use warnings;
 use lib "t/lib/";
 
 use MySchema;
-use Test::More;
+use Test::Most;
 
 eval "use DBD::SQLite; 1"
   or plan skip_all => "DBD::SQLite needed for this test";
 
-plan tests => 12;
+plan tests => 13;
 
 my $schema = MySchema->connect(
     "DBI:SQLite::memory:",
@@ -23,13 +23,15 @@ my $schema = MySchema->connect(
             $storage->dbh->sqlite_create_function(
                 'TIME', -1,
                 sub {
-                    my ($offset) = @_;
+                    my ( $offset, $offset_min ) = @_;
 
-                    no warnings 'numeric';
-                    $offset //= 0;    # default
-                    $offset += 0;     # numify
+                    for ( $offset, $offset_min ) {
+                        no warnings 'numeric';
+                        $_ //= 0;    # default
+                        $_ += 0;     # numify
+                    }
 
-                    return time + $offset;
+                    return time + $offset + 60 * $offset_min;
                 }
             );
         },
@@ -58,6 +60,17 @@ is $row->time => ( time + 42 ), '$row->time';
 is $schema->execute_stored_procedure( Time => { offset => 42 } )->next->time =>
   ( time + 42 ),
   '$schema->execute_stored_procedure';
+
+subtest "parameter order" => sub {
+    sub t { $schema->execute_stored_procedure( Time => {@_} )->next->time }
+
+    is t( offset => 30, offset_min => 1 ) => time + 90,
+      "offset,offset_min";
+    is t( offset_min => 1, offset => 30 ) => time + 90,
+      "offset_min,offset";
+
+    dies_ok { t( offset_min => 42 ) }, "2nd param only dies";
+};
 
 subtest relationships => sub {
     ok my $table = $schema->resultset('MyTable')->new( { offset => 42 } );

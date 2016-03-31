@@ -8,6 +8,8 @@ use warnings;
 
 use base 'DBIx::Class';
 
+use Tie::IxHash;
+
 sub add_parameter {
     my ( $class, $name, $spec ) = @_;
 
@@ -29,7 +31,8 @@ sub procedure {
 
     # TODO find solution that works via load_components()
 
-    $class->result_source_instance->mk_classdata( parameters => {} );
+    tie( my %params, 'Tie::IxHash' );
+    $class->result_source_instance->mk_classdata( parameters => \%params );
 
     {
         my $rs_class = $class->resultset_class;
