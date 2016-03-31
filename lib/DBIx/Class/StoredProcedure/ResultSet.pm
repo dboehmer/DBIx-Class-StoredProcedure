@@ -30,7 +30,7 @@ sub cursor {
     my $self = shift;
 
     if ( not $self->{cursor} ) {
-        my $cols = $self->result_source->arguments;
+        my $cols = $self->result_source->parameters;
 
         my %params;
 

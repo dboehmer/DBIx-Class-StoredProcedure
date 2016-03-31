@@ -8,17 +8,17 @@ use warnings;
 
 use base 'DBIx::Class';
 
-sub add_argument {
+sub add_parameter {
     my ( $class, $name, $spec ) = @_;
 
-    $class->result_source_instance->arguments->{$name} = $spec;
+    $class->result_source_instance->parameters->{$name} = $spec;
 }
 
-sub add_arguments {
+sub add_parameters {
     my $class = shift;
 
     while (@_) {
-        $class->add_argument( shift, shift );
+        $class->add_parameter( shift, shift );
     }
 }
 
@@ -29,7 +29,7 @@ sub procedure {
 
     # TODO find solution that works via load_components()
 
-    $class->result_source_instance->mk_classdata( arguments => {} );
+    $class->result_source_instance->mk_classdata( parameters => {} );
 
     {
         my $rs_class = $class->resultset_class;
