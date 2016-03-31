@@ -3,6 +3,9 @@ package DBIx::Class::StoredProcedure::ResultSet::SQLite;
 use strict;
 use warnings;
 
+# ABSTRACT: specific trait for ResultSet objects in SQLite
+# VERSION
+
 use DBIx::Class::StoredProcedure::Storage;
 use Moo::Role;
 

@@ -1,5 +1,10 @@
 #!/usr/bin/env perl
 
+use strict;
+use warnings;
+
+use lib "t/lib/";
+
 use MySchema;
 use Test::More;
 

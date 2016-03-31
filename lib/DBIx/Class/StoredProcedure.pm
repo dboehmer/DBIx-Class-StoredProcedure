@@ -3,6 +3,9 @@ package DBIx::Class::StoredProcedure;
 use strict;
 use warnings;
 
+# ABSTRACT: model stored procedures from your database in your DBIC schema
+# VERSION
+
 use base 'DBIx::Class';
 
 sub add_argument {

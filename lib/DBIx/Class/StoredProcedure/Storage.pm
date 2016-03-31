@@ -3,6 +3,9 @@ package DBIx::Class::StoredProcedure::Storage;
 use strict;
 use warnings;
 
+# ABSTRACT: custom storage class for executing arbitrary SQL
+# VERSION
+
 use Moo;
 
 has storage => (

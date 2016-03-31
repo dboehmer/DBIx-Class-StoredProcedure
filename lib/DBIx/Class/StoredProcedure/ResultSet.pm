@@ -3,6 +3,9 @@ package DBIx::Class::StoredProcedure::ResultSet;
 use strict;
 use warnings;
 
+# ABSTRACT: base class for ResultSet classes that model stored procedures
+# VERSION
+
 use base 'DBIx::Class::ResultSet';
 
 use DBIx::Class::Storage::DBI::Cursor;
