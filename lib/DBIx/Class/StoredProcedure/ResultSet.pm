@@ -24,6 +24,7 @@ sub new {
     return $self;
 }
 
+sub execute          { shift->search(@_) }
 sub parameters       { shift->result_source->parameters }
 sub stored_procedure { shift->result_source->name }
 

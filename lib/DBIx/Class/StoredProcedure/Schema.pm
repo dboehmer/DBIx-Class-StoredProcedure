@@ -12,7 +12,7 @@ sub execute_stored_procedure {
     my $self             = shift;
     my $stored_procedure = shift;
 
-    $self->stored_procedure($stored_procedure)->search(@_);
+    $self->stored_procedure($stored_procedure)->execute(@_);
 }
 
 sub stored_procedure {
