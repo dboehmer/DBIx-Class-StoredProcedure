@@ -11,7 +11,7 @@ use Test::Most;
 eval "use DBD::SQLite; 1"
   or plan skip_all => "DBD::SQLite needed for this test";
 
-plan tests => 13;
+plan tests => 14;
 
 my $schema = MySchema->connect(
     "DBI:SQLite::memory:",
@@ -51,25 +51,25 @@ is $schema->storage->dbh->selectrow_arrayref("SELECT TIME('foo')")->[0] => time,
   "SQL function TIME() treats strings as 0";
 
 ok my $rs = $schema->stored_procedure('Time'), '$schema->stored_procedure';
-isa_ok $rs => 'DBIx::Class::StoredProcedure::ResultSet';
+isa_ok $rs                => 'DBIx::Class::StoredProcedure::ResultSet';
+isa_ok $rs->result_source => 'DBIx::Class::StoredProcedure::ResultSource';
 ok $rs = $rs->search( { offset => 42 } ), '$resultset->search';
 ok my $row = $rs->next, '$resultset->single';
 can_ok $row => 'time';
-is $row->time => ( time + 42 ), '$row->time';
+is $row->time => ( time + 42 ), "\$row->time";
 
-is $schema->execute_stored_procedure( Time => { offset => 42 } )->next->time =>
-  ( time + 42 ),
-  '$schema->execute_stored_procedure';
+sub t { $schema->execute_stored_procedure( Time => {@_} )->next->time }
+
+is t( offset => 42 ) => ( time + 42 ),
+  "\$schema->execute_stored_procedure";
 
 subtest "parameter order" => sub {
-    sub t { $schema->execute_stored_procedure( Time => {@_} )->next->time }
-
     is t( offset => 30, offset_min => 1 ) => time + 90,
       "offset,offset_min";
     is t( offset_min => 1, offset => 30 ) => time + 90,
       "offset_min,offset";
 
-    dies_ok { t( offset_min => 42 ) }, "2nd param only dies";
+    dies_ok { t( offset_min => 42 ) } "2nd param only dies";
 };
 
 subtest relationships => sub {

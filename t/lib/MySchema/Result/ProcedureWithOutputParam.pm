@@ -5,7 +5,7 @@ use warnings;
 
 use base 'MySchema::StoredProcedure';
 
-__PACKAGE__->procedure('procedure_w_out_param');
+__PACKAGE__->stored_procedure('procedure_w_out_param');
 
 __PACKAGE__->add_parameters(
     id   => { is_nullable => 0, data_type => 'int' },

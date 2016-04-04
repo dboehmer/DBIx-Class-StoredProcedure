@@ -24,15 +24,13 @@ sub new {
     return $self;
 }
 
-sub execute          { shift->search(@_) }
-sub parameters       { shift->result_source->parameters }
-sub stored_procedure { shift->result_source->name }
+sub execute { shift->search(@_) }
 
 sub cursor {
     my $self = shift;
 
     if ( not $self->{cursor} ) {
-        my $params = $self->result_source->parameters;
+        my $params = $self->result_source->parameters_hashref;
 
         my %values;
 

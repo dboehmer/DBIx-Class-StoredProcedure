@@ -5,7 +5,7 @@ use warnings;
 
 use base 'MySchema::StoredProcedure';
 
-__PACKAGE__->procedure("time");
+__PACKAGE__->stored_procedure("time");
 
 __PACKAGE__->add_parameters(
     offset     => { data_type => "int", is_nullable => 1 },

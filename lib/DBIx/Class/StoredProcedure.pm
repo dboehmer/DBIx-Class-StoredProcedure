@@ -8,31 +8,26 @@ use warnings;
 
 use base 'DBIx::Class';
 
-use Tie::IxHash;
+# TODO better use a class like ResultSourceProxy?
+sub add_parameter  { shift->result_source_instance->add_parameter(@_) }
+sub add_parameters { shift->result_source_instance->add_parameters(@_) }
 
-sub add_parameter {
-    my ( $class, $name, $spec ) = @_;
-
-    $class->result_source_instance->parameters->{$name} = $spec;
-}
-
-sub add_parameters {
-    my $class = shift;
-
-    while (@_) {
-        $class->add_parameter( shift, shift );
-    }
-}
-
-sub procedure {
+sub stored_procedure {
     my ( $class, $procedure ) = @_;
-
-    $class->table($procedure);    # necessary to satisfy DBIC
 
     # TODO find solution that works via load_components()
 
-    tie( my %params, 'Tie::IxHash' );
-    $class->result_source_instance->mk_classdata( parameters => \%params );
+    {
+        my $rs_class = $class->table_class;    # actually ResultSource class
+
+        if ( !$rs_class or $rs_class eq 'DBIx::Class::ResultSource::Table' ) {
+            $class->table_class( __PACKAGE__ . "::ResultSource" );
+        }
+    }
+
+    $class->table($procedure);                 # necessary to satisfy DBIC
+
+    # TODO find solution that works via load_components()
 
     {
         my $rs_class = $class->resultset_class;
