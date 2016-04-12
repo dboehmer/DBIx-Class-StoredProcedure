@@ -6,6 +6,11 @@ DBIx::Class::StoredProcedure - model stored procedures from your database in you
 
 version 0.001
 
+# ACKNOWLEDGEMENT
+
+This software has been developed with support from [STRATO](https://www.strato.com/).
+In German: Diese Software wurde mit Unterstützung von [STRATO](https://www.strato.de/) entwickelt.
+
 # AUTHOR
 
 Daniel Böhmer <dboehmer@cpan.org>

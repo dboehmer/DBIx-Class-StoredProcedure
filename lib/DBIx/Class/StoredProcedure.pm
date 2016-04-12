@@ -38,4 +38,11 @@ sub stored_procedure {
     }
 }
 
+=head1 ACKNOWLEDGEMENT
+
+This software has been developed with support from L<STRATO|https://www.strato.com/>.
+In German: Diese Software wurde mit Unterstützung von L<STRATO|https://www.strato.de/> entwickelt.
+
+=cut
+
 1;
