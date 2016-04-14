@@ -7,9 +7,7 @@ use lib "t/lib/";
 
 use MySchema;
 use Test::Most;
-
-eval "use DBICx::TemporaryMySQL; 1"
-  or plan skip_all => "DBICx::TemporaryMySQL not found";
+use Test::Requires qw<DBD::mysql>;
 
 plan tests => 6;
 

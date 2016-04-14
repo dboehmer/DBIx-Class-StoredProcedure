@@ -7,9 +7,7 @@ use lib "t/lib/";
 
 use MySchema;
 use Test::Most;
-
-eval "use DBD::SQLite; 1"
-  or plan skip_all => "DBD::SQLite needed for this test";
+use Test::Requires qw<DBD::SQLite>;
 
 plan tests => 14;
 
